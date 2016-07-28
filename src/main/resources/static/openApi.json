@@ -66,6 +66,58 @@
         }
     },
     "paths": {
+        "/quotes/marketSummary": {
+            "get": {
+                "summary": "return Market Summary quote",
+                "operationId": "getMarketSummary",
+                "produces": [
+                    "application/json;charset=UTF-8"
+                ],
+                "x-apigee-apply": {
+                    "MarketSummarySpikeArrest": {
+                        "options": {
+                            "on": "request",
+                            "endPoint": "proxy"
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "description": "",
+                            "type": "object",
+                            "properties": {
+                                "average": {
+                                    "type": "number"
+                                },
+                                "open": {
+                                    "type": "number"
+                                },
+                                "volume": {
+                                    "type": "number"
+                                },
+                                "change": {
+                                    "type": "number"
+                                },
+                                "percentGain": {
+                                    "type": "string",
+                                    "minLength": 1
+                                }
+                            },
+                            "required": [
+                                "average",
+                                "open",
+                                "volume",
+                                "change",
+                                "percentGain"
+                            ]
+                        }
+                    }
+                },
+                "parameters": []
+            }
+        },
         "/quotes/{ticker-symbol}": {
             "get": {
                 "summary": "Get latest market quote for a stock",
@@ -75,10 +127,10 @@
                 ],
                 "x-apigee-apply": {
                     "QuoteVerifyApiKey": {
-                      "options": {
-                        "on": "request",
-                        "endPoint": "proxy"
-                      }
+                        "options": {
+                            "on": "request",
+                            "endPoint": "proxy"
+                        }
                     },
                     "QuoteResponseCache": {
                         "options": {
@@ -87,10 +139,10 @@
                         }
                     },
                     "QuoteSpikeArrest": {
-                      "options": {
-                        "on": "request",
-                        "endPoint": "proxy"
-                      }
+                        "options": {
+                            "on": "request",
+                            "endPoint": "proxy"
+                        }
                     }
                 },
                 "responses": {
@@ -162,67 +214,13 @@
                         }
                     }
                 },
-                "parameters": [
-                    {
-                        "name": "ticker-symbol",
-                        "in": "path",
-                        "type": "string",
-                        "description": "Ticker Symbol",
-                        "required": true
-                    }
-                ]
-            }
-        },
-        "/quotes/marketSummary": {
-            "get": {
-                "summary": "return Market Summary quote",
-                "operationId": "getMarketSummary",
-                "produces": [
-                    "application/json;charset=UTF-8"
-                ],
-                "x-apigee-apply": {
-                    "MarketSummarySpikeArrest": {
-                      "options": {
-                        "on": "request",
-                        "endPoint": "proxy"
-                      }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "description": "",
-                            "type": "object",
-                            "properties": {
-                                "average": {
-                                    "type": "number"
-                                },
-                                "open": {
-                                    "type": "number"
-                                },
-                                "volume": {
-                                    "type": "number"
-                                },
-                                "change": {
-                                    "type": "number"
-                                },
-                                "percentGain": {
-                                    "type": "string",
-                                    "minLength": 1
-                                }
-                            },
-                            "required": [
-                                "average",
-                                "open",
-                                "volume",
-                                "change",
-                                "percentGain"
-                            ]
-                        }
-                    }
-                },
-                "parameters": []
+                "parameters": [{
+                    "name": "ticker-symbol",
+                    "in": "path",
+                    "type": "string",
+                    "description": "Ticker Symbol",
+                    "required": true
+                }]
             }
         }
     }
