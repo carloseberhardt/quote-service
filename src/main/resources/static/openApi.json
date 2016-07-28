@@ -1,0 +1,229 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Stock Quotes and Market Summary API",
+        "version": "1.0.0",
+        "title": "Apigeeks Market Info",
+        "termsOfService": "",
+        "contact": {
+            "name": "Quotes API Team",
+            "url": "apigee.com",
+            "email": "carlos@apigee.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        }
+    },
+    "host": "carlos2quotes.pcf.apigeese.net",
+    "basePath": "/quotes",
+    "schemes": [
+        "http"
+    ],
+    "x-apigee-policies": {
+        "MarketSummarySpikeArrest": {
+            "type": "spikeArrest",
+            "options": {
+                "allow": 5,
+                "timeUnit": "minute"
+            }
+        },
+        "QuoteSpikeArrest": {
+            "type": "spikeArrest",
+            "options": {
+                "allow": 100,
+                "timeUnit": "minute"
+            }
+        },
+        "QuoteResponseCache": {
+            "type": "responseCache",
+            "options": {
+                "time": 300,
+                "identifier": "request.uri"
+            }
+        },
+        "QuoteVerifyApiKey": {
+            "type": "verifyApiKey",
+            "options": {
+                "in": "header",
+                "keyName": "apikey"
+            }
+        },
+        "JsonToXml": {
+            "type": "jsonToXml",
+            "options": {
+                "on": "response"
+            }
+        }
+    },
+    "x-apigee-apply": {
+        "JsonToXml": {
+            "options": {
+                "on": "response",
+                "endPoint": "target",
+                "flow": "preFlow"
+            }
+        }
+    },
+    "paths": {
+        "/{ticker-symbol}": {
+            "get": {
+                "summary": "Get latest market quote for a stock",
+                "operationId": "getQuote",
+                "produces": [
+                    "application/json;charset=UTF-8"
+                ],
+                "x-apigee-apply": {
+                    "QuoteVerifyApiKey": {
+                      "options": {
+                        "on": "request",
+                        "endPoint": "proxy"
+                      }
+                    },
+                    "QuoteResponseCache": {
+                        "options": {
+                            "on": "request,response",
+                            "endPoint": "proxy"
+                        }
+                    },
+                    "QuoteSpikeArrest": {
+                      "options": {
+                        "on": "request",
+                        "endPoint": "proxy"
+                      }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "description": "",
+                            "type": "object",
+                            "properties": {
+                                "created": {
+                                    "type": "string",
+                                    "minLength": 1
+                                },
+                                "DaysLow": {
+                                    "type": "number"
+                                },
+                                "Open": {
+                                    "type": "number"
+                                },
+                                "PreviousClose": {
+                                    "type": "number"
+                                },
+                                "Volume": {
+                                    "type": "number"
+                                },
+                                "Price": {
+                                    "type": "number"
+                                },
+                                "DaysHigh": {
+                                    "type": "number"
+                                },
+                                "Name": {
+                                    "type": "string",
+                                    "minLength": 1
+                                },
+                                "Symbol": {
+                                    "type": "string",
+                                    "minLength": 1
+                                },
+                                "Change": {
+                                    "type": "number"
+                                },
+                                "PercentageChange": {
+                                    "type": "string",
+                                    "minLength": 1
+                                },
+                                "Ask": {
+                                    "type": "number"
+                                },
+                                "Bid": {
+                                    "type": "number"
+                                }
+                            },
+                            "required": [
+                                "created",
+                                "DaysLow",
+                                "Open",
+                                "PreviousClose",
+                                "Volume",
+                                "Price",
+                                "DaysHigh",
+                                "Name",
+                                "Symbol",
+                                "Change",
+                                "PercentageChange",
+                                "Ask",
+                                "Bid"
+                            ]
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "ticker-symbol",
+                        "in": "path",
+                        "type": "string",
+                        "description": "Ticker Symbol",
+                        "required": true
+                    }
+                ]
+            }
+        },
+        "/marketSummary": {
+            "get": {
+                "summary": "return Market Summary quote",
+                "operationId": "getMarketSummary",
+                "produces": [
+                    "application/json;charset=UTF-8"
+                ],
+                "x-apigee-apply": {
+                    "MarketSummarySpikeArrest": {
+                      "options": {
+                        "on": "request",
+                        "endPoint": "proxy"
+                      }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "description": "",
+                            "type": "object",
+                            "properties": {
+                                "average": {
+                                    "type": "number"
+                                },
+                                "open": {
+                                    "type": "number"
+                                },
+                                "volume": {
+                                    "type": "number"
+                                },
+                                "change": {
+                                    "type": "number"
+                                },
+                                "percentGain": {
+                                    "type": "string",
+                                    "minLength": 1
+                                }
+                            },
+                            "required": [
+                                "average",
+                                "open",
+                                "volume",
+                                "change",
+                                "percentGain"
+                            ]
+                        }
+                    }
+                },
+                "parameters": []
+            }
+        }
+    }
+}
